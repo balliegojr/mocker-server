@@ -9,6 +9,8 @@
   "author": "Ilson Roberto Balliego Junior <ilson.balliego@gmail.com>",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.15.4"
+    "body-parser": "^1.18.1",
+    "express": "^4.15.4",
+    "nedb": "^1.8.0"
   }
 }

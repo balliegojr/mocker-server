@@ -6,4 +6,7 @@ config.set('mocker.singleUser', true);
 config.set('mocker.strictUrl', false);
 config.set('mocker.strictSchema', false);
 
+config.set('db.type', 'nedb');
+config.set('db.url', 'mocker.db')
+
 module.exports = config;

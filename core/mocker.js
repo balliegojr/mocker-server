@@ -1,42 +1,62 @@
+const db = require('./db');
+
 class MockedApi {
-    constructor(props) {
-        
+    constructor(name, singleCollection) {
+        this._name = name;
+        this._singleCollection = singleCollection;
     }
 
-    get() {
-        return new Promise((resolve, reject) => { resolve() });
+    get(id) {
+        return new Promise((resolve, reject) => { 
+            db
+            .getStore()
+            .getCollection(this._name)
+            .then((collection) => { 
+                return collection
+                    .exec((fn) => { return fn.findOne({ id: id}) })
+                    .then((response) => { resolve(response); })
+                    .catch((err) => { reject(err); });
+            });
+        });
     }
 
-    getFiltered() {
-        return new Promise((resolve, reject) => { resolve() });
+    getFiltered(filter) {
+        return new Promise((resolve, reject) => { 
+            db
+            .getStore()
+            .getCollection(this._name)
+            .then((collection) => { 
+                return collection
+                    .exec((fn) => { return fn.find({ id: id}) })
+                    .then((response) => { resolve(response); })
+                    .catch((err) => { reject(err); });
+            });
+        });
     }
 
     post() {
-        return new Promise((resolve, reject) => { resolve() });
-
+        return new Promise((resolve, reject) => { resolve('Hello world\n') });
     }
 
     put() {
-        return new Promise((resolve, reject) => { resolve() });
-
+        return new Promise((resolve, reject) => { resolve('Hello world\n') });
     }
 
     delete() {
-        return new Promise((resolve, reject) => { resolve() });
-
+        return new Promise((resolve, reject) => { resolve('Hello world\n') });
     }
 }
 
 
 class Mocker {
     constructor(options) {
-        const default = (val, def) => { return val === undefined ? def : val; };
+        const _def = (val, def) => { return val === undefined ? def : val; };
 
-        this.singleUser = default(options.singleUser, true);
-        this.strictUrl = default(options.strictUrl, false);
-        this.strictSchema = default(options.strictSchema, false);
-        this.cached = default(options.cache, false);
-        this.ttl = default(options.ttl, -1);
+        this.singleUser = _def(options.singleUser, true);
+        this.strictUrl = _def(options.strictUrl, false);
+        this.strictSchema = _def(options.strictSchema, false);
+        this.cached = _def(options.cache, false);
+        this.ttl = _def(options.ttl, -1);
     }
 
     getApis() {
@@ -52,7 +72,13 @@ class Mocker {
     }
 
     getApi(apiName) {
-        return new MockedApi();
+        return new Promise((resolve, reject) => {
+            if (this.strictUrl === true){
+                resolve(new MockedApi(apiName));
+            } else {
+                resolve(new MockedApi(apiName));
+            }
+        });
     }
 }
 
