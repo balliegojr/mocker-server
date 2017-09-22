@@ -1,22 +1,34 @@
 const db = require('./db');
+const ApiStore = require('./apiStore');
 
 class MockedApi {
-    constructor(name, singleCollection) {
+    constructor(name, singleCollection = false) {
         this._name = name;
         this._singleCollection = singleCollection;
+
+        this._apiName = name;
+        if (this._singleCollection) {
+            this._apiName = 'mocked-servers';
+        }
     }
 
     get(id) {
         return new Promise((resolve, reject) => { 
             db
             .getStore()
-            .getCollection(this._name)
+            .getCollection(this._apiName)
             .then((collection) => { 
                 return collection
-                    .exec((fn) => { return fn.findOne({ id: id}) })
-                    .then((response) => { resolve(response); })
-                    .catch((err) => { reject(err); });
-            });
+                    .exec((fn) => fn.findOne({ id: id}))
+                    .then((response) => { 
+                        if (!response) {
+                            reject('Not found');
+                        } else {
+                            resolve(response);
+                        }
+                    });
+            })
+            .catch((err) => reject(err));
         });
     }
 
@@ -24,26 +36,56 @@ class MockedApi {
         return new Promise((resolve, reject) => { 
             db
             .getStore()
-            .getCollection(this._name)
+            .getCollection(this._apiName)
             .then((collection) => { 
                 return collection
-                    .exec((fn) => { return fn.find({ id: id}) })
-                    .then((response) => { resolve(response); })
-                    .catch((err) => { reject(err); });
-            });
+                    .exec((fn) =>  fn.find(filter))
+                    .then((response) => resolve(response));
+            })
+            .catch((err) => reject(err));
         });
     }
 
-    post() {
-        return new Promise((resolve, reject) => { resolve('Hello world\n') });
+    post(obj) {
+        return new Promise((resolve, reject) => { 
+            db
+            .getStore()
+            .getCollection(this._apiName)
+            .then((collection) => {
+                return collection
+                    .insert(obj)
+                    .then((response) => resolve(response));
+            })
+            .catch((err) => reject(err));
+        });
     }
 
-    put() {
-        return new Promise((resolve, reject) => { resolve('Hello world\n') });
+    put(obj) {
+        return new Promise((resolve, reject) => { 
+            db
+            .getStore()
+            .getCollection(this._apiName)
+            .then((collection) => {
+                return collection
+                    .update(obj, { id: obj.id })
+                    .then((response) => resolve(response));
+            })
+            .catch((err) => reject(err));
+        });
     }
 
-    delete() {
-        return new Promise((resolve, reject) => { resolve('Hello world\n') });
+    delete(obj) {
+        return new Promise((resolve, reject) => { 
+            db
+            .getStore()
+            .getCollection(this._apiName)
+            .then((collection) => {
+                return collection
+                    .remove({ id: obj.id })
+                    .then((response) => resolve(response));
+            })
+            .catch((err) => reject(err));  
+        });
     }
 }
 
@@ -73,11 +115,15 @@ class Mocker {
 
     getApi(apiName) {
         return new Promise((resolve, reject) => {
-            if (this.strictUrl === true){
-                resolve(new MockedApi(apiName));
-            } else {
-                resolve(new MockedApi(apiName));
+            if (this.strictUrl === false){
+                return resolve(new MockedApi(apiName));
             }
+
+            var registeredAPis = new ApiStore();
+            registeredAPis
+                .get({ name: apiName })
+                .then(() => resolve(new MockedApi(apiName)))
+                .catch(() => reject('Api not found'));
         });
     }
 }

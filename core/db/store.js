@@ -4,13 +4,10 @@ class Collection {
 
     }
 
-    insert() { }
-
-    exec() { }
-
-    remove() { }
-
-    update() { }
+    insert() { return Promise.reject('Not implemented\n'); }
+    exec() { return Promise.reject('Not implemented\n'); }
+    remove() { return Promise.reject('Not implemented\n'); }
+    update() { return Promise.reject('Not implemented\n'); }
 }
 
 
@@ -19,14 +16,9 @@ class DataStore {
         
     }
 
-    getCollection(name) {
-    }
-
-    ensureCollection(name, options) {
-    }
-
-    removeCollection(name) {
-    }
+    getCollection(name) { return Promise.reject('Not implemented\n'); }
+    ensureCollection(name, options) { return Promise.reject('Not implemented\n'); } 
+    removeCollection(name) { return Promise.reject('Not implemented\n'); }
 }
 
 module.exports = {

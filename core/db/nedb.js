@@ -3,36 +3,66 @@ const _store = require('./store');
 const fs = require('fs');
 const path = require('path');
 
-    
-var promisifyDb = function(obj) {
-    return new Promise(function(resolve, reject) {
-        obj.exec(function(error, result) {
-            if (error) {
-                return reject(error);
-            } else {
-                return resolve(result);
-            }
-        });
-    });
-};
-
-
-function promisifyDatastore(datastore) {
-    var store = {
-        insert: Q.nbind(datastore.insert, datastore),
-        update: Q.nbind(datastore.update, datastore),
-        remove: Q.nbind(datastore.remove, datastore),
-        exec: function(fn){
-            return promisifyDb(fn(datastore))
-        }
-    };
-
-    return store;
-}
-
 class NedbCollection extends _store.Collection {
-    constructor() {
+    constructor(_store) {
         super();
+
+        this._store = _store;
+    }
+
+    exec(fn) {
+        return new Promise((resolve, reject) => {
+            fn(this._store)
+            .exec((error, result) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve(result);
+                }
+            });
+        });
+    }
+
+    insert(obj) {
+        return new Promise((resolve, reject) => {
+            this._store.insert(obj, (error, result) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve(result);
+                }
+            });
+        });
+    }
+
+    update(obj, query) {
+        if (!query) {
+            query = {
+                _id: obj._id
+            };
+        }
+
+        return new Promise((resolve, reject) => {
+            this._store.insert(query, obj, {}, (err, numReplaced) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(numReplaced);
+                }
+            });
+        });
+    }
+
+    remove(query) {
+        return new Promise((resolve, reject) => {
+            this._store.remove(query, (err, numRemoved) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(numRemoved);
+                }
+            });
+        });
     }
 }
 

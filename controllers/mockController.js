@@ -11,9 +11,9 @@ router
 		core
 			.getMocker()
 			.getApi(req.params.mockName)
-			.then((api) => { return api.getFiltered(core.filter.build(req.params.queryString)); })
+			.then((api) => api.getFiltered(core.filter.build(req.params.queryString)))
 			.then((response) => res.send(response))
-			.catch((response) => res.end(500));
+			.catch((response) => res.status(500).send(response));
 	})
 	.post((req, res) => {
 		core
@@ -21,7 +21,7 @@ router
 			.getApi(req.params.mockName)
 			.post(req.body)
 			.then((response) => res.send(response))
-			.catch((response) => res.end(500));
+			.catch((response) => res.status(500).send(response));
 	});
 
 router
@@ -30,9 +30,9 @@ router
 		core
 			.getMocker()
 			.getApi(req.params.mockName)
-			.then((api) => { return api.get(req.params.id); })
-			.then((response) => { res.send(response); })
-			.catch((response) => { console.log(response); res.status(500).send(response) });
+			.then((api) => api.get(req.params.id))
+			.then((response) => res.send(response))
+			.catch((response) => res.status(500).send(response));
 	})
 	.put((req, res) => {
 		core
@@ -40,15 +40,15 @@ router
 			.getApi(req.params.mockName)
 			.put(req.params.id, req.body)
 			.then((response) => res.send(response))
-			.catch((response) => res.end(500));
+			.catch((response) => res.status(500).send(response));
 	})
 	.delete((req, res) => {
 		core
 			.getMocker()
 			.getApi(req.params.mockName)
 			.delete(req.params.id)
-			.then((response) => res.end(204))
-			.catch((response) => res.end(500));
+			.then((response) => res.status(204).end())
+			.catch((response) => res.status(500).send(response));
 	});
 
 
