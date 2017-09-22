@@ -9,7 +9,7 @@ router
 	.route('/:mockName/')
 	.get((req, res) => {
 		core
-			.getMocker()
+			.getMockStore()
 			.getApi(req.params.mockName)
 			.then((api) => api.getFiltered(core.filter.build(req.params.queryString)))
 			.then((response) => res.send(response))
@@ -17,7 +17,7 @@ router
 	})
 	.post((req, res) => {
 		core
-			.getMocker()
+			.getMockStore()
 			.getApi(req.params.mockName)
 			.post(req.body)
 			.then((response) => res.send(response))
@@ -28,7 +28,7 @@ router
 	.route('/:mockName/:id')
 	.get((req, res) => {
 		core
-			.getMocker()
+			.getMockStore()
 			.getApi(req.params.mockName)
 			.then((api) => api.get(req.params.id))
 			.then((response) => res.send(response))
@@ -36,7 +36,7 @@ router
 	})
 	.put((req, res) => {
 		core
-			.getMocker()
+			.getMockStore()
 			.getApi(req.params.mockName)
 			.put(req.params.id, req.body)
 			.then((response) => res.send(response))
@@ -44,7 +44,7 @@ router
 	})
 	.delete((req, res) => {
 		core
-			.getMocker()
+			.getMockStore()
 			.getApi(req.params.mockName)
 			.delete(req.params.id)
 			.then((response) => res.status(204).end())
