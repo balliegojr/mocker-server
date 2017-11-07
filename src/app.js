@@ -26,6 +26,7 @@ config.setOptions(program);
 
 if (program.init){
     config.save(program.init);
+    process.exit(1);
 }
 
 const express = require('express');
