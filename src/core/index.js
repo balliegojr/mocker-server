@@ -1,7 +1,7 @@
 const config = require('../config')
 const filterBuilder = require('./filterBuilder');
 const mockStore = require('./mockStore');
-const apiStore = require('./apiStore');
+const modelStore = require('./modelStore');
 
 module.exports = {
 	getMockStore: () => {
@@ -13,8 +13,8 @@ module.exports = {
 			cached: config.get('mocker.cached')
 		});
 	},
-	getApiStore: () => {
-		return new apiStore();
+	getModelStore: () => {
+		return new modelStore();
 	},
 	filter: new filterBuilder(),
 }

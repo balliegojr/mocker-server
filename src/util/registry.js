@@ -7,16 +7,16 @@ class Registry {
 	}
 
 	getValues (){
-		var values = [];
+		var values = {};
 		for (var value in this._values){
-			values.push(this._values[value]);
+			values[value] = this._values[value];
 		}
 
 		return values;
 	}
 
 	set(key, value) {
-		if (this._readOnly === true && !Object.prototype.hasOwnProperty.call(this._values, key)) {
+		if ((this._readOnly === true && !Object.prototype.hasOwnProperty.call(this._values, key)) || this._readOnly === false) {
 			this._values[key] = value;
 		}
 	}

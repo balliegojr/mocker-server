@@ -1,5 +1,5 @@
 const db = require('./db');
-const ApiStore = require('./apiStore');
+const ModelStore = require('./modelStore');
 
 class MockedApi {
     constructor(name, singleCollection = false) {
@@ -8,19 +8,19 @@ class MockedApi {
 
         this._apiName = name;
         if (this._singleCollection) {
-            this._apiName = 'mocked-servers';
+            this._apiName = 'mocked-models';
         }
     }
 
     get(id) {
-        return new Promise((resolve, reject) => { 
+        return new Promise((resolve, reject) => {
             db
             .getStore()
             .getCollection(this._apiName)
-            .then((collection) => { 
+            .then((collection) => {
                 return collection
                     .exec((fn) => fn.findOne({ id: id}))
-                    .then((response) => { 
+                    .then((response) => {
                         if (!response) {
                             reject('Not found');
                         } else {
@@ -33,11 +33,11 @@ class MockedApi {
     }
 
     getFiltered(filter) {
-        return new Promise((resolve, reject) => { 
+        return new Promise((resolve, reject) => {
             db
             .getStore()
             .getCollection(this._apiName)
-            .then((collection) => { 
+            .then((collection) => {
                 return collection
                     .exec((fn) =>  fn.find(filter))
                     .then((response) => resolve(response));
@@ -47,7 +47,7 @@ class MockedApi {
     }
 
     post(obj) {
-        return new Promise((resolve, reject) => { 
+        return new Promise((resolve, reject) => {
             db
             .getStore()
             .getCollection(this._apiName)
@@ -61,7 +61,7 @@ class MockedApi {
     }
 
     put(obj) {
-        return new Promise((resolve, reject) => { 
+        return new Promise((resolve, reject) => {
             db
             .getStore()
             .getCollection(this._apiName)
@@ -75,7 +75,7 @@ class MockedApi {
     }
 
     delete(obj) {
-        return new Promise((resolve, reject) => { 
+        return new Promise((resolve, reject) => {
             db
             .getStore()
             .getCollection(this._apiName)
@@ -84,7 +84,7 @@ class MockedApi {
                     .remove({ id: obj.id })
                     .then((response) => resolve(response));
             })
-            .catch((err) => reject(err));  
+            .catch((err) => reject(err));
         });
     }
 }
@@ -119,9 +119,9 @@ class Mocker {
                 return resolve(new MockedApi(apiName));
             }
 
-            var registeredAPis = new ApiStore();
+            var registeredAPis = new ModelStore();
             registeredAPis
-                .get({ name: apiName })
+                .get(apiName)
                 .then(() => resolve(new MockedApi(apiName)))
                 .catch(() => reject('Api not found'));
         });
