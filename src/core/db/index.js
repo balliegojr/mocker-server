@@ -5,7 +5,7 @@ const dbType = config.get('db.type');
 
 var dbStore;
 if (dbType === 'nedb'){
-    dbStore = new nedbStore(config.get('db.url'));
+    dbStore = new nedbStore(config.get('db.url'), config.get('db.options'));
 }
 
 module.exports = {

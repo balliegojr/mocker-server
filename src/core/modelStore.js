@@ -25,14 +25,13 @@ class ModelStore {
         });
     }
 
-    create(modelName) {
+    insert(modelName) {
       return new Promise((resolve, reject) => {
           db
           .getStore()
           .getCollection(this._collectionName)
           .then((collection) => {
-                return collection
-                collection.insert({name: modelName, created: new Date(), count: 0 })
+                return collection.insert({name: modelName, created: new Date(), count: 0 })
                 .then((response) => {
                     if (!response) {
                         reject('Error inserting model: ' + modelName);
@@ -66,6 +65,7 @@ class ModelStore {
 
                     });
             })
+            .then(resolve)
             .catch((err) => reject(err));
         });
     }

@@ -2,6 +2,7 @@ const DataStore = require('nedb');
 const _store = require('./store');
 const fs = require('fs');
 const path = require('path');
+const extend = require('util')._extend;
 
 class NedbCollection extends _store.Collection {
     constructor(_store) {
@@ -69,25 +70,23 @@ class NedbCollection extends _store.Collection {
 const _collections = {};
 
 class Nedb extends _store.DataStore {
-    constructor(path) {
+    constructor(path, options) {
         super();
         this._path = path;
+        this._options = options || {};
     }
 
-    ensureCollection(collection, options) {
+    ensureCollection(collection) {
         if (_collections[collection]){
             return _collections[collection];
         }
 
-        var _dataStore = new DataStore({
-            filename: path.join(this._path, 'data/'+ collection +'.db'),
+        let options = extend(this._options, {
+            filename: path.join(this._path, collection + '.db'),
             autoload: true
         });
-        
-        if (options.index){
-            _dataStore.ensureIndex(options.index);
-        }
 
+        var _dataStore = new DataStore(options);
         return _collections[collection] = new NedbCollection(_dataStore);
     }
 
@@ -96,17 +95,21 @@ class Nedb extends _store.DataStore {
             delete _collections[collection];
         }
 
-        fs.unlinkSync(path.join(this._path, 'data/' + collection + '.db'));
+        if (fs.existsSync(path.join(this._path, collection + '.db'))){
+            fs.unlinkSync(path.join(this._path, collection + '.db'));
+        }
     }
 
     getCollection(collection) {
         return new Promise((resolve, reject) => {
             if (!_collections[collection]){
+                let options = extend(this._options, {
+                    filename: path.join(this._path, collection + '.db'),
+                    autoload: true
+                });
+
                 _collections[collection] = new NedbCollection(
-                    new DataStore({
-                        filename: path.join(this._path, 'data/'+ collection +'.db'),
-                        autoload: true
-                    })
+                    new DataStore(options)
                 );    
             }
 

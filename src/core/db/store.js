@@ -17,8 +17,9 @@ class DataStore {
     }
 
     getCollection(name) { return Promise.reject('Not implemented\n'); }
-    ensureCollection(name, options) { return Promise.reject('Not implemented\n'); } 
+    ensureCollection(name) { return Promise.reject('Not implemented\n'); } 
     removeCollection(name) { return Promise.reject('Not implemented\n'); }
+    ensureIndex(index) { return Promise.reject('Not implemented\n'); }
 }
 
 module.exports = {

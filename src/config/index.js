@@ -45,7 +45,7 @@ class Configuration {
     }
 
     save(path) {
-        fs.writeFileSync(process.cwd() + '/' + path, JSON.stringify(default_config.getValues()));
+        fs.writeFileSync(path, JSON.stringify(default_config.getValues()));
     }
 
     setOptions(options) {
