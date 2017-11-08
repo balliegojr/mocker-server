@@ -7,6 +7,7 @@ describe('modelStore', function(){
     let _store;
     beforeEach(() => {
         _store = new modelStore();
+        _store.ensureIndexes();
         //db_store.ensureCollection(_store._collectionName);
     });
 
@@ -30,6 +31,7 @@ describe('modelStore', function(){
 
         it('Should throw an error for inexistent model', () => {
             return _store.get('test-model')
+                .then(() => { throw Error("Should not succeed") })
                 .catch((res) => {
                     expect(res).to.equal('Not found');
                 });
@@ -50,12 +52,12 @@ describe('modelStore', function(){
             });
         });
 
-        it('should not insert two models with the same name', (done) => {
-            _store.insert('test-model')
+        it('should not insert two models with the same name', () => {
+            return _store.insert('test-model')
                 .then((model) => _store.insert(model.name))
+                .then(() => { throw Error('Should not succeed'); })
                 .catch((res) => {
-                    expect(res).to.equal('bla bla bla');
-                    done();
+                    expect(res).to.equal('Model already exists');
                 });
         });
     });
@@ -78,7 +80,18 @@ describe('modelStore', function(){
         });
 
         it('Should not remove a model with register count greater than 0', () => {
-            expect(true).to.false;
+            return _store.insert('test-model')
+                .then((model) => {
+                    model.count = 10;
+
+                    return db_store
+                        .getCollection(_store._collectionName)
+                        .then((collection) => collection.update(model));
+                        
+                })
+                .then(() => _store.remove('test-model'))
+                .then(() => { throw Error('Should not succeed'); })
+                .catch((res) => expect(res).to.equal('There are registers to this model, remove them manually or use force remove'));
         });
     });
 
@@ -88,11 +101,21 @@ describe('modelStore', function(){
         });
 
         it('should remove an existent model regardless it register count', () => {
-            expect(true).to.false;
+            return _store.insert('test-model')
+            .then((model) => {
+                model.count = 10;
+
+                return db_store
+                    .getCollection(_store._collectionName)
+                    .then((collection) => collection.update(model));
+            })
+            .then(() => _store.forceRemove('test-model'))
+            .then((res) => expect(res).to.equal(1));
         });
 
         it('should return an error when trying to remove an inexistent model', () => {
             return _store.forceRemove('test-model')
+                .then((res) => { throw Error('Should not succeed'); })
                 .catch((res) => expect(res).to.equal('Not found'));
         });
 

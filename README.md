@@ -36,13 +36,10 @@ In case the option "Strict Url" is activated, it is necessary to register the mo
   - delete
 
 - Implement Model store
-  - insert
-  - delete
-  - force delete
+  - force delete [delete the mocks]
 
 - Implement tests
   - model store
-  - mock store
 
 #### Multi User ####
 

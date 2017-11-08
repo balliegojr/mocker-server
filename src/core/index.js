@@ -17,4 +17,7 @@ module.exports = {
 		return new modelStore();
 	},
 	filter: new filterBuilder(),
+	ensureIndexes: () => {
+		this.getModelStore().ensureIndexes();
+	}
 }

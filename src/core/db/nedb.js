@@ -44,7 +44,7 @@ class NedbCollection extends _store.Collection {
         }
 
         return new Promise((resolve, reject) => {
-            this._store.insert(query, obj, {}, (err, numReplaced) => {
+            this._store.update(query, obj, {}, (err, numReplaced) => {
                 if (err) {
                     reject(err);
                 } else {
@@ -115,6 +115,19 @@ class Nedb extends _store.DataStore {
 
             resolve(_collections[collection]);
         });
+    }
+
+    ensureIndex(collectionName, index){
+        return this.getCollection(collectionName)
+            .then((collection) => {
+                let _index = {
+                    fieldName: index.field,
+                    unique: index.unique,
+                    expireAfterSeconds: index.ttl ? index.ttl : undefined
+                };
+
+                collection._store.ensureIndex(_index, (err) => { if (err) { throw err }});
+            });
     }
 }
 
