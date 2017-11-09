@@ -1,12 +1,12 @@
 const config = require('../testconfig');
-const modelStore = require('../../src/core/modelStore');
+const core = require('../../src/core');
 const expect = require('chai').expect;
 const db_store = require('../../src/core/db').getStore();
 
 describe('modelStore', function(){
     let _store;
     beforeEach(() => {
-        _store = new modelStore();
+        _store = core.getModelStore();
         _store.ensureIndexes();
         //db_store.ensureCollection(_store._collectionName);
     });

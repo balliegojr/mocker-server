@@ -6,11 +6,8 @@ const modelStore = require('./modelStore');
 module.exports = {
 	getMockStore: () => {
 		return new mockStore({
-			singleUser: config.get('mocker.singleUser'),
 			strictUrl: config.get('mocker.strictUrl'),
-			strictSchema: config.get('mocker.strictSchema'),
 			ttl: config.get('mocker.ttl'),
-			cached: config.get('mocker.cached')
 		});
 	},
 	getModelStore: () => {
@@ -18,6 +15,6 @@ module.exports = {
 	},
 	filter: new filterBuilder(),
 	ensureIndexes: () => {
-		this.getModelStore().ensureIndexes();
+		(new modelStore()).ensureIndexes();
 	}
 }

@@ -90,27 +90,12 @@ class MockedApi {
 }
 
 
-class Mocker {
-    constructor(options) {
+class MockStore {
+    constructor(options = {}) {
         const _def = (val, def) => { return val === undefined ? def : val; };
 
-        this.singleUser = _def(options.singleUser, true);
         this.strictUrl = _def(options.strictUrl, false);
-        this.strictSchema = _def(options.strictSchema, false);
-        this.cached = _def(options.cache, false);
         this.ttl = _def(options.ttl, -1);
-    }
-
-    getApis() {
-
-    }
-
-    saveApi(api) {
-
-    }
-
-    removeApi(api) {
-
     }
 
     getApi(apiName) {
@@ -128,4 +113,4 @@ class Mocker {
     }
 }
 
-module.exports = Mocker;
+module.exports = MockStore;
