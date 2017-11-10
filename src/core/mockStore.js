@@ -12,6 +12,24 @@ class MockedApi {
         }
     }
 
+    toStoreFormat(obj){
+        if (Object.prototype.hasOwnProperty.call(obj, 'id')){
+            obj._id = obj.id;
+            delete obj.id;
+        }
+
+        return obj;
+    };
+
+    fromStoreFormat(obj) {
+        if (Object.prototype.hasOwnProperty.call(obj, '_id')){
+            obj.id = obj._id;
+            delete obj._id;
+        }
+
+        return obj;
+    }
+
     get(id) {
         return new Promise((resolve, reject) => {
             db
@@ -19,12 +37,12 @@ class MockedApi {
             .getCollection(this._apiName)
             .then((collection) => {
                 return collection
-                    .exec((fn) => fn.findOne({ id: id}))
+                    .exec((fn) => fn.findOne({ _id: id}))
                     .then((response) => {
                         if (!response) {
                             reject('Not found');
                         } else {
-                            resolve(response);
+                            resolve(this.fromStoreFormat(response));
                         }
                     });
             })
@@ -40,7 +58,7 @@ class MockedApi {
             .then((collection) => {
                 return collection
                     .exec((fn) =>  fn.find(filter))
-                    .then((response) => resolve(response));
+                    .then((response) => resolve((response || []).map(x => this.fromStoreFormat(x))));
             })
             .catch((err) => reject(err));
         });
@@ -53,36 +71,45 @@ class MockedApi {
             .getCollection(this._apiName)
             .then((collection) => {
                 return collection
-                    .insert(obj)
-                    .then((response) => resolve(response));
+                    .insert(this.toStoreFormat(obj))
+                    .then((response) => resolve(this.fromStoreFormat(response)));
             })
             .catch((err) => reject(err));
         });
     }
 
-    put(obj) {
+    put(id, obj) {
+        return new Promise((resolve, reject) => {
+            db
+            .getStore()
+            .getCollection(this._apiName)
+            .then((collection) => {
+                obj.id = id;
+                let _obj = this.toStoreFormat(obj);
+
+                return collection
+                    .update(_obj, { _id: id })
+                    .then((response) => { 
+                        if (response === 0){
+                            reject('Not found');
+                        } else {
+                            resolve(this.fromStoreFormat(obj));
+                        }
+                    });
+            })
+            .catch((err) => reject(err));
+        });
+    }
+
+    delete(id) {
         return new Promise((resolve, reject) => {
             db
             .getStore()
             .getCollection(this._apiName)
             .then((collection) => {
                 return collection
-                    .update(obj, { id: obj.id })
-                    .then((response) => resolve(response));
-            })
-            .catch((err) => reject(err));
-        });
-    }
-
-    delete(obj) {
-        return new Promise((resolve, reject) => {
-            db
-            .getStore()
-            .getCollection(this._apiName)
-            .then((collection) => {
-                return collection
-                    .remove({ id: obj.id })
-                    .then((response) => resolve(response));
+                    .remove({ _id: id })
+                    .then((response) => response === 0 ? reject('Not found') : resolve(response));
             })
             .catch((err) => reject(err));
         });

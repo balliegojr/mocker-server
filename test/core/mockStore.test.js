@@ -57,6 +57,7 @@ describe('modelStore', () =>{
                         .then(() => _store.getApi(apiName))
                         .then((api) => api.get(id))
                         .then((item) => {
+                            expect(item._id).to.not.exist;
                             expect(item.id).to.equal(id);
                             expect(item.field).to.equal('field-content');
                         });
@@ -76,6 +77,18 @@ describe('modelStore', () =>{
                 it('should exist', () => { 
                     return _store.getApi(apiName).then((api) => expect(api.getFiltered).to.be.a('function'));
                 });
+
+                it('should return an empty array if no itens are found', () => {
+                    return _store.getApi(apiName)
+                        .then((api) => api.getFiltered({}))
+                        .then((res) => {
+                            expect(res).to.length(0);
+                        });
+                });
+
+                it('should return an array with filtered items', () => {
+                    expect(true).to.equal(false);
+                })
             });
 
             describe('post method', () => {
@@ -86,16 +99,18 @@ describe('modelStore', () =>{
                 it('should store a new item in the database', () => {
                     return _store.getApi(apiName)
                         .then((api) => {
-                            return api.post({ field: 'test field', 'field-two': 'test field two' });
+                            return api.post({ id: 1, field: 'test field', 'field-two': 'test field two' });
                         })
                         .then((res) => {
-                            expect(res._id).to.exist;
+                            expect(res._id).to.not.exist;
+                            expect(res.id).to.equal(1);
                             expect(res.field).to.equal('test field');
                             expect(res['field-two']).to.equal('test field two');
 
                             return db_store.getCollection(apiName)
-                                .then((collection) => collection.exec((fn) => fn.findOne({ _id: res.id})))
+                                .then((collection) => collection.exec((fn) => fn.findOne({ _id: 1})))
                                 .then((db_res) => {
+                                    expect(db_res.id).to.not.exist;
                                     expect(db_res).to.exist;
                                     expect(db_res.field).to.equal(res.field);
                                 });
@@ -108,11 +123,65 @@ describe('modelStore', () =>{
                 it('should exist', () => { 
                     return _store.getApi(apiName).then((api) => expect(api.put).to.be.a('function'));
                 });
+
+                it('should update an existent item', () => {
+                    let id = 'exclusive-id';
+                    return db_store.getCollection(apiName)
+                        .then((collection) => collection.insert({ _id: id, field: "current value"}))
+                        .then(() => _store.getApi(apiName))
+                        .then((api) => api.put(id, { id: id, field: 'new value', fieldTwo: 'another new value' }))
+                        .then((res) => {
+                            expect(res.id).to.equal(id);
+                            expect(res.field).to.equal('new value');
+                            expect(res.fieldTwo).to.equal('another new value');
+
+                            return db_store.getCollection(apiName);
+                        })
+                        .then((collection) => collection.exec((fn) => fn.findOne({ _id: id})))
+                        .then((res) => {
+                            expect(res._id).to.equal(id);
+                            expect(res.field).to.equal('new value');
+                            expect(res.fieldTwo).to.equal('another new value');
+                        });
+
+                });
+
+                it('should fail if the item isnt found', () => {
+                    let id = 'exclusive-id';
+                    return _store.getApi(apiName)
+                        .then((api) => api.put(id, { id: id, field: 'new value', fieldTwo: 'another new value' }))
+                        .then((res) => { throw Error('Should not succeed'); })
+                        .catch((err) => { expect(err).to.equal('Not found'); });
+                });
             });
 
             describe('delete method', () => {
                 it('should exist', () => { 
                     return _store.getApi(apiName).then((api) => expect(api.delete).to.be.a('function'));
+                });
+
+                it('should delete an existent item', () => {
+                    let id = 'exclusive-id';
+                    return db_store.getCollection(apiName)
+                        .then((collection) => collection.insert({ _id: id }))
+                        .then(() => _store.getApi(apiName))
+                        .then((api) => api.delete(id))
+                        .then((res) => {
+                            expect(res).to.equal(1);
+                            return db_store.getCollection(apiName);
+                        })
+                        .then((collection) => collection.exec((fn) => fn.count({ _id: id})))
+                        .then((res) => {
+                            expect(res).to.equal(0);
+                        });
+                });
+
+                it('should fail if the item isnt found', () => {
+                    let id = 'exclusive-id';
+                    return _store.getApi(apiName)
+                        .then((api) => api.delete(id, { id: id }))
+                        .then((res) => { throw Error('Should not succeed'); })
+                        .catch((err) => { expect(err).to.equal('Not found'); });
                 });
             });
         });
