@@ -12,12 +12,11 @@ class ModelStore {
     }
 
     ensureIndexes() {
-        let _indexes = this._getIndexes();
-        for (var index in _indexes) {
+        return Promise.all(this._getIndexes().map((index) => {
             db
-                .getStore()
-                .ensureIndex(this._collectionName, _indexes[index]);
-        }
+            .getStore()
+            .ensureIndex(this._collectionName, index)
+        }));
     }
 
 

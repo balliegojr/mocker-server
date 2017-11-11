@@ -11,16 +11,27 @@ router
 		core
 			.getMockStore()
 			.getApi(req.params.mockName)
-			.then((api) => api.getFiltered(core.filter.build(req.params.queryString)))
+			.then((api) => api.getFiltered(core.filter.build(req.query)))
 			.then((response) => res.send(response))
-			.catch((response) => res.status(500).send(response));
+			.catch((response) => res.status(500).send(response))
+			
 	})
 	.post((req, res) => {
 		core
 			.getMockStore()
 			.getApi(req.params.mockName)
-			.post(req.body)
+			.then((api) => api.post(req.body))
 			.then((response) => res.send(response))
+			.catch((response) => res.status(500).send(response));
+	});
+
+router
+	.get('/:mockName/count', (req, res) => {
+		core
+			.getMockStore()
+			.getApi(req.params.mockName)
+			.then((api) => api.countFiltered(core.filter.build(req.query)))
+			.then((response) => res.send(response.toString()))
 			.catch((response) => res.status(500).send(response));
 	});
 
@@ -32,23 +43,42 @@ router
 			.getApi(req.params.mockName)
 			.then((api) => api.get(req.params.id))
 			.then((response) => res.send(response))
-			.catch((response) => res.status(500).send(response));
+			.catch((response) => { 
+				if (response === 'Not found'){
+					res.status(404).send('Resource not found');
+				} else {
+					res.status(500).send(response);
+				}
+			});
+			
 	})
 	.put((req, res) => {
 		core
 			.getMockStore()
 			.getApi(req.params.mockName)
-			.put(req.params.id, req.body)
+			.then((api) => api.put(req.params.id, req.body))
 			.then((response) => res.send(response))
-			.catch((response) => res.status(500).send(response));
+			.catch((response) => { 
+				if (response === 'Not found'){
+					res.status(404).send('Resource not found');
+				} else {
+					res.status(500).send(response);
+				}
+			});
 	})
 	.delete((req, res) => {
 		core
 			.getMockStore()
 			.getApi(req.params.mockName)
-			.delete(req.params.id)
+			.then((api) => api.delete(req.params.id))
 			.then((response) => res.status(204).end())
-			.catch((response) => res.status(500).send(response));
+			.catch((response) => { 
+				if (response === 'Not found'){
+					res.status(404).send('Resource not found');
+				} else {
+					res.status(500).send(response);
+				}
+			});
 	});
 
 

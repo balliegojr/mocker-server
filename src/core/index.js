@@ -15,6 +15,6 @@ module.exports = {
 	},
 	filter: new filterBuilder(),
 	ensureIndexes: () => {
-		(new modelStore()).ensureIndexes();
+		return (new modelStore()).ensureIndexes();
 	}
 }

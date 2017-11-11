@@ -8,7 +8,6 @@ describe('modelStore', function(){
     beforeEach(() => {
         _store = core.getModelStore();
         _store.ensureIndexes();
-        //db_store.ensureCollection(_store._collectionName);
     });
 
     afterEach(() => {

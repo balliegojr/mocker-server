@@ -12,6 +12,7 @@ This is not intended to be used in production environment.
 #### Mock Requests ####
 
 - GET /api/mock/{model}
+- GET /api/mock/{model}/count
 - GET /api/mock/{model}/{id}
 - POST /api/mock/{model}
 - PUT /api/mock/{model}/{id}
@@ -29,17 +30,12 @@ In case the option "Strict Url" is activated, it is necessary to register the mo
 ## TODOs ##
 - Implement filter builder
 
-- Implement Mock store
-  - get
-  - insert
-  - update
-  - delete
+- Implement Model controller
 
 - Implement Model store
   - force delete [delete the mocks]
 
-- Implement tests
-  - model store
+
 
 #### Multi User ####
 
