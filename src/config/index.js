@@ -2,13 +2,14 @@ const global_registry = require('../util/registry');
 const default_config = global_registry.isolated(undefined, false);
 const fs = require('fs');
 
-const __default_config_file = '';
+const __default_config_file = '.mockerserver.json';
 
 default_config.set('express.port', 3000);
 default_config.set('mocker.strictUrl', false);
 
 default_config.set('db.type', 'nedb');
 default_config.set('db.url', 'mocker.db')
+default_config.set('db.options', { inMemoryOnly: false });
 
 const param_options = {
     'express.port': 'port',
@@ -38,7 +39,9 @@ class Configuration {
 
         const config = JSON.parse(fs.readFileSync(path));
         for (var key in config){
-            default_config.set(key, config[key]);
+            if (config[key] !== undefined && config[key] !== null){
+                default_config.set(key, config[key]);
+            }
         }
     }
 
@@ -52,6 +55,10 @@ class Configuration {
             if (options[option]){
                 default_config.set(key, options[option]);
             }
+        }
+
+        if (options.inMemory){
+            default_config.set('db.options', { inMemoryOnly: true});
         }
     }
 }
