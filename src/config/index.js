@@ -5,9 +5,7 @@ const fs = require('fs');
 const __default_config_file = '';
 
 default_config.set('express.port', 3000);
-default_config.set('mocker.singleUser', true);
 default_config.set('mocker.strictUrl', false);
-default_config.set('mocker.strictSchema', false);
 
 default_config.set('db.type', 'nedb');
 default_config.set('db.url', 'mocker.db')

@@ -30,8 +30,6 @@ In case the option "Strict Url" is activated, it is necessary to register the mo
 ## TODOs ##
 - Implement filter builder
 
-- Implement Model controller
-
 - Implement Model store
   - force delete [delete the mocks]
 

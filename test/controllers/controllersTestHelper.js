@@ -19,6 +19,8 @@ let mockedApi = new MockedApi();
 const fakeMockStore = {
     getApi: () => { return Promise.resolve(mockedApi) }
 }
+const fakeModelStore = core.getModelStore();
+
 module.exports = {
     request: chai.request(app),
     stubFilter: () => {
@@ -26,6 +28,19 @@ module.exports = {
     },
     stubMockStore: () => {
         sinon.stub(core, 'getMockStore').returns(fakeMockStore);
+    },
+    stubModelStore: (setUp) => {
+        if (setUp){
+            sinon.stub(core, 'getModelStore').returns(fakeModelStore);
+            
+            sinon.stub(fakeModelStore, 'getAll');
+            sinon.stub(fakeModelStore, 'get');
+            sinon.stub(fakeModelStore, 'insert');
+            sinon.stub(fakeModelStore, 'delete');
+            sinon.stub(fakeModelStore, 'forceDelete');
+        }
+
+        return fakeModelStore;
     },
     stubMockedApi: (setUp) => {
         if (setUp){
@@ -44,6 +59,9 @@ module.exports = {
     },
     restoreMockStore: () => {
         core.getMockStore.restore();
+    },
+    restoreModelStore: () => {
+        core.getModelStore.restore();
     },
     restoreMockedApi: () => {
         for (var method in mockedApi){

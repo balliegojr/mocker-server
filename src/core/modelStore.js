@@ -19,7 +19,6 @@ class ModelStore {
         }));
     }
 
-
     get(modelName) {
         return new Promise((resolve, reject) => {
             db
@@ -35,6 +34,20 @@ class ModelStore {
                                 resolve(response);
                             }
                         });
+                })
+                .catch((err) => reject(err));
+        });
+    }
+
+    getAll() {
+        return new Promise((resolve, reject) => {
+            db
+                .getStore()
+                .getCollection(this._collectionName)
+                .then((collection) => {
+                    return collection
+                        .exec((fn) => fn.find({ }))
+                        .then((response) => resolve(response));
                 })
                 .catch((err) => reject(err));
         });
@@ -65,7 +78,7 @@ class ModelStore {
         });
     }
 
-    remove(modelName) {
+    delete(modelName) {
         return new Promise((resolve, reject) => {
             db
                 .getStore()
@@ -78,7 +91,7 @@ class ModelStore {
                                 reject('Not found');
                             }
                             else if (response.count > 0) {
-                                reject('There are registers to this model, remove them manually or use force remove');
+                                reject('There are registers to this model, delete them manually or use forceDelete');
                             }
                             else {
                                 return collection.remove(response);
@@ -91,7 +104,7 @@ class ModelStore {
         });
     }
 
-    forceRemove(modelName) {
+    forceDelete(modelName) {
         return new Promise((resolve, reject) => {
             db
                 .getStore()
@@ -102,9 +115,9 @@ class ModelStore {
                         .then((response) => {
                             if (!response) {
                                 reject('Not found');
+                            } else {
+                                resolve(response);
                             }
-
-                            resolve(response);
                         });
                 })
                 .then(resolve)
