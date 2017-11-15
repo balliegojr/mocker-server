@@ -1,5 +1,11 @@
 const extend = require('util')._extend;
 
+
+const operators = {
+	'eq': '=',
+
+}
+
 class FilterBuilder {
 	build(queryString) {
 		let response = {}
@@ -9,7 +15,7 @@ class FilterBuilder {
 
 		if (queryString.ordering){
 			response.sorting = {};
-			queryString.ordering.split(',').forEach(function(fieldFilter) {
+			queryString.ordering.split(',').forEach((fieldFilter) => {
 				if (fieldFilter[0] === '-')	{
 					response.sorting[fieldFilter.substring(1)] = -1;
 				} else {
@@ -19,13 +25,13 @@ class FilterBuilder {
 		}
 
 		if (queryString.skip || queryString.limit) {
-			response.pagination = { skip: parseInt(queryString.skip), limit: parseInt(queryString.limit) };
+			response.pagination = { skip: parseInt(queryString.skip || 0), limit: parseInt(queryString.limit || 0) };
 		}
 
 		if (queryString.filtering){
-			response.filtering = {};
+			response.filtering = JSON.parse(queryString.filtering);
 		}
-		
+
 		return response;
 	}
 }

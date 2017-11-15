@@ -11,10 +11,25 @@ class NedbCollection extends _store.Collection {
         this._store = _store;
     }
 
-    exec(fn) {
+    exec(fn, options = {}) {
         return new Promise((resolve, reject) => {
-            fn(this._store)
-            .exec((error, result) => {
+            let _fn = fn(this._store, options.filtering || {});
+            if (options.sorting){
+                _fn = _fn.sort(options.sorting);
+            }
+
+            if (options.pagination){
+                if (options.pagination.skip){
+                    _fn = _fn.skip(options.pagination.skip);
+                }
+
+                if (options.pagination.limit) {
+                    _fn = _fn.limit(options.pagination.limit);
+                }
+            }
+            
+            
+            _fn.exec((error, result) => {
                 if (error) {
                     reject(error);
                 } else {

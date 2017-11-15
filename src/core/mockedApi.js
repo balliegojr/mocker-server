@@ -49,28 +49,31 @@ class MockedApi {
         });
     }
 
-    getFiltered(filter) {
+    getFiltered(filterOptions) {
         return new Promise((resolve, reject) => {
             db
             .getStore()
             .getCollection(this._apiName)
             .then((collection) => {
                 return collection
-                    .exec((fn) =>  fn.find(filter))
+                    .exec((store, filter) =>  store.find(filter), filterOptions)
                     .then((response) => resolve((response || []).map(x => this.fromStoreFormat(x))));
             })
             .catch((err) => reject(err));
         });
     }
 
-    countFiltered(filter) {
+    countFiltered(filterOptions) {
+        delete filterOptions.pagination;
+        delete filterOptions.sorting;
+
         return new Promise((resolve, reject) => {
             db
             .getStore()
             .getCollection(this._apiName)
             .then((collection) => {
                 return collection
-                    .exec((fn) =>  fn.count(filter))
+                    .exec((fn, filter) =>  fn.count(filter), filterOptions)
                     .then((response) => resolve(response));
             })
             .catch((err) => reject(err));

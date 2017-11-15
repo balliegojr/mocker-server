@@ -26,9 +26,8 @@ describe('filterBuilder', () =>{
     });
 
     it('Should build the filtering filter', ()=> {
-        let filter = _builder.build({ filtering: 'field=x' });
-        expect(true).to.false;
-        
+        let filter = _builder.build({ filtering: '{ "field": "value" }' });
+        expect(filter.filtering.field).to.equal('value');
     });
 
 });

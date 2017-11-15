@@ -59,8 +59,9 @@ describe('mocked api', () => {
                     collection.insert({ field: 'field-content', otherField: 'content' });
                     collection.insert({ field: 'field-content', otherField: 'another content' });
                     collection.insert({ field: 'field-content', yetAnotherField: 'content' });
+                    collection.insert({ field: 'field-content-wrong', yetAnotherField: 'content' });
                 })
-                .then(() => api.getFiltered({ field: 'field-content' }))
+                .then(() => api.getFiltered({ filtering: { field: 'field-content' }}))
                 .then((res) => {
                     expect(res).to.length(3);
                 });
@@ -81,8 +82,10 @@ describe('mocked api', () => {
                     collection.insert({ field: 'field-content', otherField: 'content' });
                     collection.insert({ field: 'field-content', otherField: 'another content' });
                     collection.insert({ field: 'field-content', yetAnotherField: 'content' });
+                    collection.insert({ field: 'field-content-wrong', yetAnotherField: 'content' });
+                    
                 })
-                .then(() => api.countFiltered({ field: 'field-content' }))
+                .then(() => api.countFiltered({ filtering: { field: 'field-content' }}))
                 .then((res) => {
                     expect(res).to.equal(3);
                 });
