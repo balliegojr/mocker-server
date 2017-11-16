@@ -13,9 +13,9 @@ class FilterBuilder {
 			return response;
 		}
 
-		if (queryString.ordering){
+		if (queryString.sort){
 			response.sorting = {};
-			queryString.ordering.split(',').forEach((fieldFilter) => {
+			queryString.sort.split(',').forEach((fieldFilter) => {
 				if (fieldFilter[0] === '-')	{
 					response.sorting[fieldFilter.substring(1)] = -1;
 				} else {

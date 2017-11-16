@@ -48,46 +48,57 @@ It is possible to pass the flag --save [file] to save the configuration to a giv
 
 #### Mock Requests ####
 
-- GET /api/mock/{model}
-- GET /api/mock/{model}/count
-- GET /api/mock/{model}/{id}
-- POST /api/mock/{model}
-- PUT /api/mock/{model}/{id}
-- DELETE /api/mock/{model}/{id}
+- GET /api/mock/{model}  
+Return the listing for the given model
+
+- GET /api/mock/{model}/count  
+Return the count for the given model
+
+- GET /api/mock/{model}/{id}  
+Return the item that match the id for the given model
+
+- POST /api/mock/{model}  
+Insert a new item for the given model
+
+- PUT /api/mock/{model}/{id}  
+Update the item that match the id for the given model
+
+- DELETE /api/mock/{model}/{id}  
+Delete the item that match the id for the given model
+
+
+#### Query string filtering ####
+The list and counting methods accept filter parameters through query string  
+
+- GET /api/mock/person?filtering={name: 'anderson'}  
+
+Possible filters are:  
+- skip=<n>
+- limit=<n>
+- sort=fieldOne,fieldTwo,-fieldThree  
+- filtering=<json formated filter>
 
 #### Model Management ####
 if the option --strict-url is used, then is necessary to register the models before utilization
 
-- POST /api/model
-- GET /api/model
-- DELETE /api/model/{model}
-- DELETE /api/model/{model}/force
+- POST /api/model  
+Register a new model
+
+- GET /api/model  
+Return existent models
+
+- DELETE /api/model/{model}  
+Delete a given model if no items are registered to the given model
+
+- DELETE /api/model/{model}/force  
+Delete a given model even if there are items registered to it
 
 
 ## TODOs and future improvements ##
 - Document APIs correctly
-- Implement filter builder
-
+- Implement correct filtering instead of using json
+- Implement mongodb driver
 - Implement Model store
   - force delete [delete the mocks]
-
 - Implement TTL for the mocks
-
-
-#### Multi User ####
-
-- Implement user management  
-
-  - POST api/user - create new user
-  - DELETE api/user/{userId} - delete existing user
-  - PUT api/user/{userId} - change existing user
-  - GET api/user/{userId} - get user by id
-
-
-#### Token authentication and validation ####
-
-- Implement the use of token validation
-
-  - POST api/user/{userId}/app/{appId}/token - create a new token
-  - DELETE api/user/{userId}/app/{appId}/token/{tokenId}
-  - GET api/token/{userId} - get user tokens
+- Multi user and Token utilization

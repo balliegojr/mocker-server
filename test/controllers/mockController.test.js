@@ -29,13 +29,12 @@ describe('mockController', () => {
     });
 
     describe('GET api/mock/:mock/', () => {
-        it('should return an array of the specified mock', (done) => {
+        it('should return an array of the specified mock', () => {
             const result = [ 1 ];
             stubedApi.getFiltered.returns( Promise.resolve(result) );
             
-            request.get('/api/mock/modelx')
-                .query('filter=x')
-                .end((err, res) => {
+            return request.get('/api/mock/modelx', 'filter=x')
+                .then((res) => {
                     expect(res).to.have.status(200);
                     expect(res.body).to.be.a('array');
                     expect(res.body).length(1);
@@ -43,202 +42,174 @@ describe('mockController', () => {
 
                     expect(core.filter.build.calledWith({ filter: 'x'})).to.true;
                     expect(stubedApi.getFiltered.calledWith('fake-filter')).to.true;
-                    done();
                 });
         });
 
-        it('should fail with 500 if an error ocurred', (done) => {
+        it('should fail with 500 if an error ocurred', () => {
             stubedApi.getFiltered.returns( Promise.reject('An error ocurred'));
             
-            request.get('/api/mock/modelx')
-                .end((err, res) => {
-                    expect(res).to.have.status(500);
-                    expect(res.text).to.equal('An error ocurred');
-
-                    done();
+            return request.get('/api/mock/modelx')
+                .catch((err) => {
+                    expect(err).to.have.status(500);
+                    expect(err.text).to.equal('An error ocurred');
                 });
         });
     });
 
     describe('GET api/mock/:mock/count', () => {
-        it('should return the count of items', (done) => {
+        it('should return the count of items', () => {
             stubedApi.countFiltered.returns( Promise.resolve(10) );
             
-            request.get('/api/mock/modelx/count')
-                .query('filter=x')
-                .end((err, res) => {
+            return request.get('/api/mock/modelx/count', 'filter=x')
+                .then((res) => {
                     expect(res).to.have.status(200);
                     expect(res.text).to.equal('10');
 
                     expect(core.filter.build.calledWith({ filter: 'x'})).to.true;
                     expect(stubedApi.countFiltered.calledWith('fake-filter')).to.true;
-                    done();
                 });
         });
 
-        it('should fail with 500 if an error ocurred', (done) => {
+        it('should fail with 500 if an error ocurred', () => {
             stubedApi.countFiltered.returns( Promise.reject('An error ocurred'));
             
-            request.get('/api/mock/modelx')
-                .end((err, res) => {
+            return request.get('/api/mock/modelx')
+                .catch((res) => {
                     expect(res).to.have.status(500);
                     expect(res.text).to.equal('An error ocurred');
-
-                    done();
                 });
         });
     });
 
     describe('GET api/mock/:mock/:id', () => {
-        it('should return the specified mock item', (done) => {
+        it('should return the specified mock item', () => {
             
             stubedApi.get.returns( Promise.resolve( { id: 1 }) );
             
-            request.get('/api/mock/modelx/1')
-                .end((err, res) => {
+            return request.get('/api/mock/modelx/1')
+                .then((res) => {
                     expect(res).to.have.status(200);
                     expect(res.body).to.be.a('object');
                     expect(res.body.id).to.equal(1);
 
                     expect(stubedApi.get.calledWith('1')).to.true;
-                    done();
                 });
         });
 
-        it('should fail with 404 when the resource is not found', (done) => {
+        it('should fail with 404 when the resource is not found', () => {
             stubedApi.get.returns( Promise.reject('Not found'));
             
-            request.get('/api/mock/modelx/1')
-                .end((err, res) => {
+            return request.get('/api/mock/modelx/1')
+                .catch((res) => {
                     expect(res).to.have.status(404);
                     expect(res.text).to.equal('Resource not found');
-
-                    done();
                 });
         });
 
-        it('should fail with 500 for another errors', (done) => {
+        it('should fail with 500 for another errors', () => {
             stubedApi.get.returns( Promise.reject('Error message'));
             
-            request.get('/api/mock/modelx/1')
-                .end((err, res) => {
+            return request.get('/api/mock/modelx/1')
+                .catch((res) => {
                     expect(res).to.have.status(500);
                     expect(res.text).to.equal('Error message');
-
-                    done();
                 });
         });
     });
 
     describe('POST api/mock/:mock', () => {
-        it('should insert a new item', (done) => {
-            
+        it('should insert a new item', () => {
             stubedApi.post.returns( Promise.resolve( { id: 1, field:'x' }) );
             
-            request.post('/api/mock/modelx/')
-                .send({ field: 'x' })
-                .end((err, res) => {
+            return request.post('/api/mock/modelx/', null, {field: 'x'})
+                .then((res) => {
                     expect(res).to.have.status(200);
                     expect(res.body).to.be.a('object');
                     expect(res.body.id).to.equal(1);
                     expect(res.body.field).to.equal('x');
 
                     expect(stubedApi.post.calledWith({ field: 'x' })).to.true;
-                    done();
                 });
         });
 
-        it('should fail with 500 for another errors', (done) => {
+        it('should fail with 500 for another errors', () => {
             stubedApi.post.returns( Promise.reject('Error message'));
             
-            request.post('/api/mock/modelx')
-                .end((err, res) => {
+            return request.post('/api/mock/modelx')
+                .catch((res) => {
                     expect(res).to.have.status(500);
                     expect(res.text).to.equal('Error message');
-
-                    done();
                 });
         });
     });
 
     describe('PUT api/mock/:mock/:id', () => {
-        it('should update an existent item', (done) => {
+        it('should update an existent item', () => {
             
             stubedApi.put.returns( Promise.resolve( { id: 1, field:'x' }) );
             
-            request.put('/api/mock/modelx/1')
-                .send({ field: 'x' })
-                .end((err, res) => {
+            return request.put('/api/mock/modelx/1', null, {field: 'x'})
+                .then((res) => {
                     expect(res).to.have.status(200);
                     expect(res.body).to.be.a('object');
                     expect(res.body.id).to.equal(1);
                     expect(res.body.field).to.equal('x');
 
                     expect(stubedApi.put.calledWith('1', { field: 'x' })).to.true;
-                    done();
                 });
         });
 
-        it('should fail with 404 for Not Found', (done) => {
+        it('should fail with 404 for Not Found', () => {
             stubedApi.put.returns( Promise.reject('Not found'));
             
-            request.put('/api/mock/modelx/1')
-                .end((err, res) => {
+            return request.put('/api/mock/modelx/1')
+                .catch((res) => {
                     expect(res).to.have.status(404);
                     expect(res.text).to.equal('Resource not found');
-
-                    done();
                 });
         });
 
-        it('should fail with 500 for another errors', (done) => {
+        it('should fail with 500 for another errors', () => {
             stubedApi.put.returns( Promise.reject('Error message'));
             
-            request.put('/api/mock/modelx/1')
-                .end((err, res) => {
+            return request.put('/api/mock/modelx/1')
+                .catch((res) => {
                     expect(res).to.have.status(500);
                     expect(res.text).to.equal('Error message');
-
-                    done();
                 });
         });
     });
     
 
     describe('DELETE api/mock/:mock/:id', () => {
-        it('should delete an existent item', (done) => {
+        it('should delete an existent item', () => {
             
             stubedApi.delete.returns( Promise.resolve( 1 ) );
             
-            request.delete('/api/mock/modelx/1')
-                .end((err, res) => {
+            return request.delete('/api/mock/modelx/1')
+                .then((res) => {
                     expect(res).to.have.status(204);
                     expect(stubedApi.delete.calledWith('1')).to.true;
-                    done();
                 });
         });
 
-        it('should fail with 404 for Not Found', (done) => {
+        it('should fail with 404 for Not Found', () => {
             stubedApi.delete.returns( Promise.reject('Not found'));
             
-            request.delete('/api/mock/modelx/1')
-                .end((err, res) => {
+            return request.delete('/api/mock/modelx/1')
+                .catch((res) => {
                     expect(res).to.have.status(404);
                     expect(res.text).to.equal('Resource not found');
-
-                    done();
                 });
         });
 
-        it('should fail with 500 for another errors', (done) => {
+        it('should fail with 500 for another errors', () => {
             stubedApi.delete.returns( Promise.reject('Error message'));
             
-            request.delete('/api/mock/modelx/1')
-                .end((err, res) => {
+            return request.delete('/api/mock/modelx/1')
+                .catch((res) => {
                     expect(res).to.have.status(500);
                     expect(res.text).to.equal('Error message');
-
-                    done();
                 });
         });
     });

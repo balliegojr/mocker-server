@@ -6,8 +6,8 @@ chai.use(require('chai-http'));
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
-
 const sinon = require('sinon');
+
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -21,8 +21,88 @@ const fakeMockStore = {
 }
 const fakeModelStore = core.getModelStore();
 
+const _request = chai.request(app);
+const request = {
+    get: (url, query) => {
+        let _call = _request.get(url);
+        if (query){
+            _call = _call.query(query);
+        }
+
+        return new Promise((resolve, reject) => {
+            _call.end((err, res) => {
+                if (err) { 
+                    reject(res);
+                } else {
+                    resolve(res);
+                }
+            });
+        });
+    },
+    delete: (url, query) => {
+        let _call = _request.delete(url);
+        if (query){
+            _call = _call.query(query);
+        }
+
+        return new Promise((resolve, reject) => {
+            _call.end((err, res) => {
+                if (err) { 
+                    reject(res);
+                } else {
+                    resolve(res);
+                }
+            });
+        });
+    },
+    post: (url, query, body) => {
+        let _call = _request.post(url);
+        if (query){
+            _call = _call.query(query);
+        }
+
+        if (body) {
+            _call = _call.send(body);
+        }
+
+        return new Promise((resolve, reject) => {
+            _call.end((err, res) => {
+                if (err) { 
+                    reject(res);
+                } else {
+                    resolve(res);
+                }
+            });
+        });
+    },
+    put: (url, query, body) => {
+        let _call = _request.put(url);
+        if (query){
+            _call = _call.query(query);
+        }
+
+        if (body) {
+            _call = _call.send(body);
+        }
+
+        return new Promise((resolve, reject) => {
+            _call.end((err, res) => {
+                if (err) { 
+                    reject(res);
+                } else {
+                    resolve(res);
+                }
+            });
+        });
+    }
+}
+
+    
+
+
+
 module.exports = {
-    request: chai.request(app),
+    request: request,
     stubFilter: () => {
         sinon.stub(core.filter, 'build');
     },

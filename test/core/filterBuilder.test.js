@@ -11,12 +11,12 @@ describe('filterBuilder', () =>{
     it('Should have a build method', () => expect(_builder.build).to.be.a('function'));
 
     it('Should build the sorting filter', () => {
-        let filter = _builder.build({ ordering: 'field,field2,-field3'});
+        let filter = _builder.build({ sort: 'field,field2,-field3'});
         expect(filter.sorting.field).to.equal(1);
         expect(filter.sorting.field2).to.equal(1);
         expect(filter.sorting.field3).to.equal(-1);
 
-        expect(_builder.build({ordering: ''}).sorting).to.not.exist;
+        expect(_builder.build({sort: ''}).sorting).to.not.exist;
     });
 
     it('Should build the pagination filter', ()=> {
