@@ -101,6 +101,7 @@ describe('mocked api', () => {
                     expect(res._id).to.not.exist;
                     expect(res.id).to.equal(1);
                     expect(res.field).to.equal('test field');
+                    expect(res._created).to.exist;
                     expect(res['field-two']).to.equal('test field two');
 
                     return db_store.getCollection(api._apiName)

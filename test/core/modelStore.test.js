@@ -70,7 +70,6 @@ describe('modelStore', function(){
             return _store.insert('test-model').then((model) => {
                 expect(model.name).to.equal('test-model');
                 expect(model._id).to.exist;
-                expect(model.count).to.equal(0);
                 expect(model.created).to.exist;
             });
         });
@@ -99,46 +98,6 @@ describe('modelStore', function(){
 
         it('should return an error when trying to delete an inexistent model', () => {
             return _store.delete('test-model')
-                .catch((res) => expect(res).to.equal('Not found'));
-        });
-
-        it('Should not delete a model with register count greater than 0', () => {
-            return _store.insert('test-model')
-                .then((model) => {
-                    model.count = 10;
-
-                    return db_store
-                        .getCollection(_store._collectionName)
-                        .then((collection) => collection.update(model));
-                        
-                })
-                .then(() => _store.delete('test-model'))
-                .then(() => { throw Error('Should not succeed'); })
-                .catch((res) => expect(res).to.equal('There are registers to this model, delete them manually or use forceDelete'));
-        });
-    });
-
-    describe('forceDelete method', function(){
-        it('should exist', function(){
-            expect(_store.forceDelete).to.be.a('function');
-        });
-
-        it('should Delete an existent model regardless it register count', () => {
-            return _store.insert('test-model')
-            .then((model) => {
-                model.count = 10;
-
-                return db_store
-                    .getCollection(_store._collectionName)
-                    .then((collection) => collection.update(model));
-            })
-            .then(() => _store.forceDelete('test-model'))
-            .then((res) => expect(res).to.equal(1));
-        });
-
-        it('should return an error when trying to Delete an inexistent model', () => {
-            return _store.forceDelete('test-model')
-                .then((res) => { throw Error('Should not succeed'); })
                 .catch((res) => expect(res).to.equal('Not found'));
         });
 

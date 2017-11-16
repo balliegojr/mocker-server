@@ -17,6 +17,10 @@ class MockedApi {
             delete obj.id;
         }
 
+        if (obj['_created'] === undefined || obj['_created'] === null){
+            obj._created = new Date();
+        }
+
         return obj;
     };
 

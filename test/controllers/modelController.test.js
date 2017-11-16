@@ -105,50 +105,13 @@ describe('modelController', () => {
         });
 
         it('should fail with 500 for any other errors', () => {
-            helper.stubModelStore().delete.returns( Promise.reject('There are registers to this model, delete them manually or use forceDelete') );
+            helper.stubModelStore().delete.returns( Promise.reject('An error ocurred') );
             
             return request.delete('/api/model/1')
-                .catch((res) => {
-                    expect(res).to.have.status(500);
-                    expect(res.text).to.equal('There are registers to this model, delete them manually or use forceDelete');
-                });
-        });
-    });
-
-    describe('DELETE api/model/:id/force', () => {
-        it('should delete an existent model', () => {
-            helper.stubModelStore().forceDelete.returns( Promise.resolve(1) );
-            
-            return request.delete('/api/model/1/force')
-                .then((res) => {
-                    expect(res).to.have.status(200);
-                    expect(res.text).to.equal('1');
-
-                    expect(helper.stubModelStore().delete.calledWith('1')).to.true;
-                });
-        });
-
-        it('should fail with 404 when the model is not found', () => {
-            helper.stubModelStore().forceDelete.returns( Promise.reject('Not found') );
-            
-            return request.delete('/api/model/1/force')
-                .catch((res) => {
-                    expect(res).to.have.status(404);
-                    expect(res.text).to.equal('Resource not found');
-                });
-        });
-
-        it('should fail with 500 for any other errors', () => {
-            helper.stubModelStore().forceDelete.returns( Promise.reject('An error ocurred') );
-            
-            return request.delete('/api/model/1/force')
                 .catch((res) => {
                     expect(res).to.have.status(500);
                     expect(res.text).to.equal('An error ocurred');
                 });
         });
     });
-
-    
-
 });

@@ -88,10 +88,7 @@ Register a new model
 Return existent models
 
 - DELETE /api/model/{model}  
-Delete a given model if no items are registered to the given model
-
-- DELETE /api/model/{model}/force  
-Delete a given model even if there are items registered to it
+Delete a given model
 
 
 ## TODOs and future improvements ##

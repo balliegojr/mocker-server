@@ -117,7 +117,6 @@ module.exports = {
             sinon.stub(fakeModelStore, 'get');
             sinon.stub(fakeModelStore, 'insert');
             sinon.stub(fakeModelStore, 'delete');
-            sinon.stub(fakeModelStore, 'forceDelete');
         }
 
         return fakeModelStore;
