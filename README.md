@@ -12,6 +12,7 @@ This is not intended to be used in production environment.
 | --save [file] | 'Create a config file with the default configurations'  |
 | --port [port] or -p [port] | 'Express port number'  |
 | --strict-url |  'Validate model url'  |
+| --ttl | Default ttl for mocks, in seconds. ONLY work with strict-url=true |
 | --db-path | 'Path to db file'  |
 | --in-memory | 'Run using a memory database'  |
 
@@ -27,6 +28,9 @@ Your configuration should looks like:
 
   //Validate the url for the apis
   "mocker.strictUrl":false,  
+
+  //Default ttl for mocks
+  "mocker.ttl": 0,
 
   //Database type, only nedb for now
   "db.type":"nedb",  
@@ -81,7 +85,7 @@ Possible filters are:
 #### Model Management ####
 if the option --strict-url is used, then is necessary to register the models before utilization
 
-- POST /api/model  
+- POST /api/model  { name: "newmodel", ttl: 0 }
 Register a new model
 
 - GET /api/model  
@@ -95,7 +99,5 @@ Delete a given model
 - Document APIs correctly
 - Implement correct filtering instead of using json
 - Implement mongodb driver
-- Implement Model store
-  - force delete [delete the mocks]
 - Implement TTL for the mocks
 - Multi user and Token utilization

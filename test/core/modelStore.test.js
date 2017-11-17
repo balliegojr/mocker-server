@@ -20,7 +20,7 @@ describe('modelStore', function(){
         });
 
         it('should return an existent model', () => {
-            return _store.insert('test-model')
+            return _store.insert({ name: 'test-model'})
                 .then((model) => _store.get(model.name))
                 .then((model) => {
                     expect(model.name).to.equal('test-model');
@@ -43,9 +43,9 @@ describe('modelStore', function(){
 
         it('should return all existent model', () => {
             return 
-                _store.insert('test-model')
-                .then(() => _store.insert('test-model-2'))
-                .then(() => _store.insert('test-model-3'))
+                _store.insert({ name: 'test-model'})
+                .then(() => _store.insert({ name: 'test-model-2'}))
+                .then(() => _store.insert({ name: 'test-model-3'}))
                 .then((model) => _store.getAll())
                 .then((models) => {
                     expect(models).to.have.length(3);
@@ -67,7 +67,7 @@ describe('modelStore', function(){
         });
         
         it('should insert a new model', () => {
-            return _store.insert('test-model').then((model) => {
+            return _store.insert({ name: 'test-model'}).then((model) => {
                 expect(model.name).to.equal('test-model');
                 expect(model._id).to.exist;
                 expect(model.created).to.exist;
@@ -75,8 +75,8 @@ describe('modelStore', function(){
         });
 
         it('should not insert two models with the same name', () => {
-            return _store.insert('test-model')
-                .then((model) => _store.insert(model.name))
+            return _store.insert({ name: 'test-model' })
+                .then((model) => _store.insert({ name: model.name }))
                 .then(() => { throw Error('Should not succeed'); })
                 .catch((res) => {
                     expect(res).to.equal('Model already exists');
@@ -91,7 +91,7 @@ describe('modelStore', function(){
         });
 
         it('should delete an existent record', () => {
-            return _store.insert('test-model')
+            return _store.insert({ name: 'test-model' })
                 .then(() => _store.delete('test-model'))
                 .then((res) => expect(res).to.equal(1));
         });

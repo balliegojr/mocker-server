@@ -23,7 +23,7 @@ router
 
         core
             .getModelStore()
-            .insert(req.body.name)
+            .insert({ name: req.body.name, ttl: req.body.ttl })
             .then((response) => res.send(response))
             .catch((response) => res.status(500).send(response))
     });

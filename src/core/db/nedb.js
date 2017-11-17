@@ -141,7 +141,7 @@ class Nedb extends _store.DataStore {
                     expireAfterSeconds: index.ttl ? index.ttl : undefined
                 };
 
-                collection._store.ensureIndex(_index, (err) => { if (err) { throw err }});
+                collection._store.ensureIndex(_index, (err) => { if (err) { console.log(err) }});
             });
     }
 }

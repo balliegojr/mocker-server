@@ -6,15 +6,14 @@ const modelStore = require('./modelStore');
 module.exports = {
 	getMockStore: () => {
 		return new mockStore({
-			strictUrl: config.get('mocker.strictUrl'),
-			ttl: config.get('mocker.ttl'),
+			strictUrl: config.get('mocker.strictUrl')
 		});
 	},
 	getModelStore: () => {
-		return new modelStore();
+		return new modelStore(config.get('mocker.ttl'));
 	},
 	filter: new filterBuilder(),
 	ensureIndexes: () => {
-		return (new modelStore()).ensureIndexes();
+		return (new modelStore(config.get('mocker.ttl'))).ensureIndexes();
 	}
 }

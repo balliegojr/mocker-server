@@ -1,8 +1,9 @@
 const db = require('./db');
 
 class ModelStore {
-    constructor() {
+    constructor(default_ttl) {
         this._collectionName = 'models';
+        this._default_ttl = default_ttl;
     }
 
     _getIndexes() {
@@ -11,12 +12,25 @@ class ModelStore {
         ]
     }
 
+    _createIndexForModel(model) {
+        return db
+            .getStore()
+            .ensureIndex(model.name, { field:'_created', unique: true, ttl: model.ttl || this.default_ttl });
+    }
+
     ensureIndexes() {
         return Promise.all(this._getIndexes().map((index) => {
-            db
+            return db
             .getStore()
             .ensureIndex(this._collectionName, index)
-        }));
+        }))
+        .then(() => {
+            return this.getAll().then((models) => {
+                Promise.all(models
+                    .filter(model => (model.ttl || this._default_ttl) > 0)
+                    .map((model) => this._createIndexForModel(model)));
+            });
+        });
     }
 
     get(modelName) {
@@ -53,18 +67,19 @@ class ModelStore {
         });
     }
 
-    insert(modelName) {
+    insert(model) {
         return new Promise((resolve, reject) => {
             db
                 .getStore()
                 .getCollection(this._collectionName)
                 .then((collection) => {
-                    return collection.insert({ name: modelName, created: new Date() })
+                    return collection.insert({ name: model.name, created: new Date(), ttl: model.ttl || this._default_ttl })
                         .then((response) => {
                             if (!response) {
-                                throw new Error('Error inserting model: ' + modelName);
+                                throw new Error('Error inserting model: ' + model.name);
                             } else {
                                 resolve(response);
+                                _createIndexForModel(response);
                             }
                         });
                 })

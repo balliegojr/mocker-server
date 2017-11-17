@@ -30,7 +30,7 @@ describe('modelStore', () =>{
 
             it('should return a registered api', () => {
                 return core.getModelStore()
-                    .insert('model-test')
+                    .insert({ name: 'model-test' })
                     .then(() => core.getMockStore().getApi('model-test'))
                     .then((api) => expect(api).to.exist);
             });

@@ -6,6 +6,7 @@ const __default_config_file = '.mockerserver.json';
 
 default_config.set('express.port', 3000);
 default_config.set('mocker.strictUrl', false);
+default_config.set('mocker.ttl', 0);
 
 default_config.set('db.type', 'nedb');
 default_config.set('db.url', 'mocker.db')

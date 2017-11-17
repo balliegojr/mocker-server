@@ -54,7 +54,7 @@ describe('modelController', () => {
                     expect(res.body.id).to.equal(1);
                     expect(res.body.name).to.equal('model');
 
-                    expect(helper.stubModelStore().insert.calledWith('model')).to.true;
+                    expect(helper.stubModelStore().insert.calledWith({ name: 'model', ttl: undefined })).to.true;
                 });
         });
 
