@@ -7,6 +7,9 @@
     "test": "mocha 'test/*.test.js' 'test/**/*.test.js'",
     "start": "node ."
   },
+  "bin": {
+    "mock-server": "src/app.js"
+  },
   "author": "Ilson Roberto Balliego Junior <ilson.balliego@gmail.com>",
   "license": "ISC",
   "dependencies": {
